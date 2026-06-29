@@ -1,0 +1,34 @@
+name: Build Hidden Bar
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build macOS App
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Build project
+      run: |
+        xcodebuild -project "Hidden Bar.xcodeproj" \
+          -scheme "Hidden Bar" \
+          -configuration Release \
+          -derivedDataPath ./build \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY="" \
+          build
+    
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Hidden-Bar-App
+        path: ./build/Build/Products/Release/Hidden Bar.app
+        retention-days: 30
